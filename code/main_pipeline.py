@@ -16,7 +16,7 @@ from crawl_demographics import crawl_demographics
 from io_load import load_gdp, load_pop
 from utils import *
 from paths import (GDP_PER_CAPITA_2021, POPULATION_2021,
-                   DEMOGRAPHICS_RAW_CSV)
+                    DEMOGRAPHICS_RAW_CSV)
 
 configure_logging()
 log = logging.getLogger("pipeline")
@@ -39,6 +39,11 @@ def run(gdp_csv: Path, pop_csv: Path, force_crawl=False):
     X, merged = fe.build_features(demo_clean, gdp_clean, pop_clean)
 
     log_metadata("Table after feature engineering", df=merged)
+    merged.to_csv('merged.csv')
+
+    stats = stats_for_numeric_fields(merged, ignore_cols=["Country"])
+    stats.to_csv('merged_stats.csv')
+    log.info("Summary statistics per field:\n%s", stats)
 
     log.info("Pipeline completed")
 

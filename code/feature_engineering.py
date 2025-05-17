@@ -16,12 +16,13 @@ log = logging.getLogger("features")
 SELECTED = ["LifeExpectancy_Both", "LogGDPperCapita", "LogPopulation"]
 
 def build_features(demo: pd.DataFrame, gdp: pd.DataFrame,
-                    pop: pd.DataFrame) -> np.ndarray:
+                    pop: pd.DataFrame) -> tuple[np.ndarray, pd.DataFrame]:
     # check country is set as index for all dfs
     for df in [demo, gdp, pop]:
         if df.index.name != "Country":
             raise ValueError("Expected 'Country' as index in all DataFrames")
     # 5.1 Total GDP ----------------------------------------------------------
+    # GIven in absolute numbers
     if pop["Population"].max() < 1e3:
         raise ValueError("Population values appear to be in millions, expected absolute numbers")
     gdp["TotalGDP"] = gdp["GDP_per_capita_PPP"] * pop["Population"]
